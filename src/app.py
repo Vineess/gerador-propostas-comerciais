@@ -1,7 +1,9 @@
 import tkinter as tk
-from tkinter import messagebox
+from tkinter import messagebox, ttk
 import pdfkit
 import os
+import csv
+from datetime import datetime
 
 # Função para gerar o PDF
 def gerar_pdf():
@@ -15,23 +17,21 @@ def gerar_pdf():
         messagebox.showerror("Erro", "Preencha todos os campos para gerar a proposta.")
         return
 
-    html_content = f"""
-    <html>
-    <head><meta charset="utf-8">
-    <style>
-        body {{ font-family: Arial, sans-serif; margin: 40px; }}
-        .titulo {{ font-size: 26px; font-weight: bold; margin-bottom: 20px; }}
-        .info {{ font-size: 18px; margin-bottom: 10px; }}
-        .valor {{ font-size: 20px; color: green; margin-top: 20px; }}
-    </style></head>
-    <body>
-        <h2 class="titulo">Proposta Comercial</h2>
-        <p class="info"><strong>Cliente:</strong> {cliente}</p>
-        <p class="info"><strong>Descrição:</strong> {descricao}</p>
-        <p class="valor"><strong>Valor:</strong> R$ {valor}</p>
-    </body>
-    </html>
-    """
+    # Obter o modelo escolhido
+    modelo_escolhido = combobox_modelo.get()
+    
+    # Carregar o conteúdo HTML do modelo escolhido
+    try:
+        modelo_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "templates", f"modelo_{modelo_escolhido}.html")
+        with open(modelo_path, "r", encoding="utf-8") as f:
+            html_content = f.read()
+
+        # Substituir placeholders no modelo pelo conteúdo do formulário
+        html_content = html_content.replace("{{cliente}}", cliente).replace("{{descricao}}", descricao).replace("{{valor}}", valor)
+    
+    except Exception as e:
+        messagebox.showerror("Erro", f"Erro ao carregar modelo: {str(e)}")
+        return
 
     root_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
     output_dir = os.path.join(root_dir, "propostas")
@@ -48,19 +48,37 @@ def gerar_pdf():
     except Exception as e:
         messagebox.showerror("Erro ao gerar PDF", f"Erro: {str(e)}")
 
+    # Caminho do histórico CSV
+    historico_path = os.path.join(root_dir, "historico.csv")
+
+    # Dados a registrar
+    dados = [datetime.now().strftime("%Y-%m-%d %H:%M:%S"), cliente, descricao, valor]
+    escrever_cabecalho = not os.path.exists(historico_path)
+
+    try:
+        with open(historico_path, mode='a', newline='', encoding='utf-8') as arquivo_csv:
+            writer = csv.writer(arquivo_csv)
+            if escrever_cabecalho:
+                writer.writerow(["Data/Hora", "Cliente", "Descrição", "Valor"])
+            writer.writerow(dados)
+    except Exception as e:
+        messagebox.showwarning("Aviso", f"A proposta foi gerada, mas houve um problema ao salvar no histórico: {str(e)}")    
+
 # UI com Tkinter
 root = tk.Tk()
 root.title("💼 Gerador de Propostas Comerciais")
 
 # Novo tamanho de janela
-root.geometry("600x280")  # Largura x Altura
+root.geometry("600x320")  # Largura x Altura
 root.configure(bg="#f5f5f5")
 
 # Labels e campos
 tk.Label(root, text="Nome do Cliente:", font=("Arial", 12), bg="#f5f5f5").grid(row=0, column=0, padx=15, pady=10, sticky='e')
 tk.Label(root, text="Descrição da Proposta:", font=("Arial", 12), bg="#f5f5f5").grid(row=1, column=0, padx=15, pady=10, sticky='e')
 tk.Label(root, text="Valor da Proposta:", font=("Arial", 12), bg="#f5f5f5").grid(row=2, column=0, padx=15, pady=10, sticky='e')
+tk.Label(root, text="Modelo de Proposta:", font=("Arial", 12), bg="#f5f5f5").grid(row=3, column=0, padx=15, pady=10, sticky='e')
 
+# Entradas de texto
 entry_cliente = tk.Entry(root, width=45, font=("Arial", 11))
 entry_cliente.grid(row=0, column=1, padx=10, pady=10)
 
@@ -70,7 +88,12 @@ entry_descricao.grid(row=1, column=1, padx=10, pady=10)
 entry_valor = tk.Entry(root, width=45, font=("Arial", 11))
 entry_valor.grid(row=2, column=1, padx=10, pady=10)
 
+# ComboBox para escolher o modelo de proposta
+combobox_modelo = ttk.Combobox(root, values=["simples", "moderno"], font=("Arial", 11))
+combobox_modelo.grid(row=3, column=1, padx=10, pady=10)
+combobox_modelo.set("simples")  # Modelo padrão
+
 btn_gerar = tk.Button(root, text="✨ Gerar Proposta", font=("Arial", 12, "bold"), bg="#4CAF50", fg="white", command=gerar_pdf)
-btn_gerar.grid(row=3, columnspan=2, pady=20)
+btn_gerar.grid(row=4, columnspan=2, pady=20)
 
 root.mainloop()
