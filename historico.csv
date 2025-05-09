@@ -1,0 +1,4 @@
+Data/Hora,Cliente,Descrição,Valor,Prazo,Pagamento,Validade
+2025-05-09 13:22:51,Vinicius,proposta teste,"50,00",12,pix,3
+2025-05-09 13:23:12,Vinicius,teste de proposta,"1000,00",20,Pix,5
+2025-05-09 13:24:27,Vinicius,teste,"50,00",5 dias,pix,2 Dias
