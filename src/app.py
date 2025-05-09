@@ -75,6 +75,46 @@ def gerar_pdf():
     except Exception as e:
         messagebox.showwarning("Aviso", f"A proposta foi gerada, mas houve um problema ao salvar no histórico: {str(e)}")    
 
+    # Função para visualizar a proposta antes de gerar o PDF
+def visualizar_proposta():
+    cliente = entry_cliente.get()
+    descricao = entry_descricao.get()
+    valor = entry_valor.get()
+
+    if not cliente or not descricao or not valor:
+        messagebox.showerror("Erro", "Preencha todos os campos para visualizar a proposta.")
+        return
+
+    # Obter o modelo escolhido
+    modelo_escolhido = combobox_modelo.get()
+
+    try:
+        modelo_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "templates", f"modelo_{modelo_escolhido}.html")
+        with open(modelo_path, "r", encoding="utf-8") as f:
+            html_content = f.read()
+
+        # Substituir placeholders no modelo pelo conteúdo do formulário
+        html_content = html_content.replace("{{cliente}}", cliente).replace("{{descricao}}", descricao).replace("{{valor}}", valor)
+
+        # Criar uma janela de visualização
+        janela_visualizacao = Toplevel(root)
+        janela_visualizacao.title("Pré-Visualização da Proposta")
+        janela_visualizacao.geometry("600x400")
+
+        # Adicionar uma caixa de texto para exibir o HTML da proposta (sem o PDF)
+        text_area = tk.Text(janela_visualizacao, wrap=tk.WORD, font=("Arial", 12), width=70, height=15)
+        text_area.insert(tk.END, html_content)
+        text_area.config(state=tk.DISABLED)
+        text_area.pack(padx=10, pady=10)
+
+        # Botão para fechar a janela de visualização
+        btn_fechar = tk.Button(janela_visualizacao, text="Fechar", command=janela_visualizacao.destroy)
+        btn_fechar.pack(pady=10)
+
+    except Exception as e:
+        messagebox.showerror("Erro ao visualizar proposta", f"Erro: {str(e)}")
+    
+
 # UI com Tkinter
 root = tk.Tk()
 root.title("💼 Gerador de Propostas Comerciais")
@@ -116,7 +156,12 @@ combobox_modelo = ttk.Combobox(root, values=["simples", "moderno"], font=("Arial
 combobox_modelo.grid(row=6, column=1, padx=10, pady=10)
 combobox_modelo.set("simples")  # Modelo padrão
 
+# Botão para gerar a proposta
 btn_gerar = tk.Button(root, text="✨ Gerar Proposta", font=("Arial", 12, "bold"), bg="#4CAF50", fg="white", command=gerar_pdf)
-btn_gerar.grid(row=7, columnspan=2, pady=20)
+btn_gerar.grid(row=4, columnspan=2, pady=10)
+
+# Botão para visualizar a proposta
+btn_visualizar = tk.Button(root, text="👁️ Visualizar Proposta", font=("Arial", 12, "bold"), bg="#2196F3", fg="white", command=visualizar_proposta)
+btn_visualizar.grid(row=5, columnspan=2, pady=10)
 
 root.mainloop()
