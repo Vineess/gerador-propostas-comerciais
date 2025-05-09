@@ -2,21 +2,79 @@
 <head>
     <meta charset="utf-8">
     <style>
-        body { font-family: 'Arial', sans-serif; margin: 40px; background-color: #f0f0f0; }
-        .titulo { font-size: 30px; font-weight: bold; color: #333; }
-        .info { font-size: 18px; margin-bottom: 10px; color: #555; }
-        .valor { font-size: 22px; color: #007BFF; margin-top: 20px; }
-        .logo { width: 120px; height: auto; margin-bottom: 20px; }
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 40px;
+            background-color: #f4f4f9;
+            color: #333;
+        }
+        .titulo {
+            font-size: 32px;
+            font-weight: bold;
+            color: #2C3E50;
+            text-align: center;
+            margin-bottom: 30px;
+            border-bottom: 3px solid #007BFF;
+            padding-bottom: 10px;
+        }
+        .info {
+            font-size: 18px;
+            margin-bottom: 15px;
+            color: #555;
+        }
+        .valor {
+            font-size: 24px;
+            color: #007BFF;
+            margin-top: 30px;
+            font-weight: bold;
+            text-align: center;
+        }
+        .logo {
+            width: 150px;
+            height: auto;
+            display: block;
+            margin: 0 auto 30px auto;
+        }
+        .linha {
+            border-top: 2px solid #007BFF;
+            margin-top: 30px;
+            margin-bottom: 30px;
+        }
+        .footer {
+            text-align: center;
+            font-size: 14px;
+            color: #777;
+            margin-top: 40px;
+        }
     </style>
 </head>
 <body>
+    <!-- Logo da empresa (comentado por enquanto) -->
     <!-- <img class="logo" src="logo_empresa.png" alt="Logo da Empresa"> -->
+
     <h2 class="titulo">Proposta Comercial - Moderna</h2>
+    
+    <!-- Linha de separação -->
+    <div class="linha"></div>
+
     <p class="info"><strong>Cliente:</strong> {{cliente}}</p>
-    <p class="info"><strong>Descrição:</strong> {{descricao}}</p>
-    <p class="valor"><strong>Valor:</strong> R$ {{valor}}</p>
+    <p class="info"><strong>Descrição da Proposta:</strong> {{descricao}}</p>
+    
+    <!-- Linha de separação -->
+    <div class="linha"></div>
+    
     <p class="info"><strong>Prazo de Entrega:</strong> {{prazo}}</p>
     <p class="info"><strong>Forma de Pagamento:</strong> {{pagamento}}</p>
     <p class="info"><strong>Validade da Proposta:</strong> {{validade}}</p>
+
+    <!-- Linha de separação -->
+    <div class="linha"></div>
+
+    <p class="valor"><strong>Valor Total:</strong> R$ {{valor}}</p>
+
+    <div class="footer">
+        <p>Para mais informações, entre em contato conosco!</p>
+        <p>Website: www.empresa.com | Email: contato@empresa.com</p>
+    </div>
 </body>
 </html>
