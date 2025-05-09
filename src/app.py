@@ -2,6 +2,8 @@ import tkinter as tk
 from tkinter import messagebox
 import pdfkit
 import os
+import csv
+from datetime import datetime
 
 # Função para gerar o PDF
 def gerar_pdf():
@@ -47,6 +49,22 @@ def gerar_pdf():
         entry_valor.delete(0, tk.END)
     except Exception as e:
         messagebox.showerror("Erro ao gerar PDF", f"Erro: {str(e)}")
+
+    # Caminho do histórico CSV
+    historico_path = os.path.join(root_dir, "historico.csv")
+
+    # Dados a registrar
+    dados = [datetime.now().strftime("%Y-%m-%d %H:%M:%S"), cliente, descricao, valor]
+    escrever_cabecalho = not os.path.exists(historico_path)
+
+    try:
+        with open(historico_path, mode='a', newline='', encoding='utf-8') as arquivo_csv:
+            writer = csv.writer(arquivo_csv)
+            if escrever_cabecalho:
+                writer.writerow(["Data/Hora", "Cliente", "Descrição", "Valor"])
+            writer.writerow(dados)
+    except Exception as e:
+        messagebox.showwarning("Aviso", f"A proposta foi gerada, mas houve um problema ao salvar no histórico: {str(e)}")    
 
 # UI com Tkinter
 root = tk.Tk()
